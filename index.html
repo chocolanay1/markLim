@@ -17,9 +17,19 @@
     --accent: #c8440a;
     --accent-light: #fdf0ea;
     --border: #e0dcd8;
-    --surface: #ffffff;
     --serif: 'Playfair Display', Georgia, serif;
     --sans: 'DM Sans', system-ui, sans-serif;
+  }
+
+  body.dark {
+    --bg: #111111;
+    --white: #1a1a1a;
+    --ink: #f0ece8;
+    --ink-2: #b0a89e;
+    --ink-3: #6b6560;
+    --accent: #e05a1a;
+    --accent-light: #2a1a10;
+    --border: #2a2520;
   }
 
   html { scroll-behavior: smooth; }
@@ -30,8 +40,10 @@
     font-family: var(--sans);
     font-size: 15px;
     line-height: 1.7;
+    transition: background 0.4s ease, color 0.4s ease;
   }
 
+  /* ── NAV ── */
   nav {
     position: sticky;
     top: 0;
@@ -39,7 +51,10 @@
     background: rgba(247,245,242,0.92);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
+    transition: background 0.4s ease, border-color 0.4s ease;
   }
+
+  body.dark nav { background: rgba(17,17,17,0.92); }
 
   .nav-inner {
     display: flex;
@@ -57,19 +72,15 @@
     color: var(--ink);
     text-decoration: none;
     letter-spacing: -0.01em;
+    transition: color 0.3s;
   }
 
-  .nav-links {
-    display: flex;
-    gap: 36px;
-    list-style: none;
-  }
+  .nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
 
   .nav-links a {
     color: var(--ink-3);
     text-decoration: none;
     font-size: 13px;
-    font-weight: 400;
     letter-spacing: 0.04em;
     transition: color 0.2s;
   }
@@ -85,6 +96,25 @@
     font-weight: 500;
   }
 
+  /* Dark mode toggle */
+  .dark-toggle {
+    background: none;
+    border: 1.5px solid var(--border);
+    color: var(--ink-3);
+    cursor: pointer;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-family: var(--sans);
+    letter-spacing: 0.04em;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dark-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── HERO ── */
   .hero {
     padding: 80px 48px 0;
     max-width: 1100px;
@@ -113,33 +143,24 @@
 
   .hero-grid {
     display: grid;
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: 1fr 340px;
     gap: 64px;
-    align-items: end;
+    align-items: center;
     padding-bottom: 64px;
   }
 
+  .hero-left { opacity: 0; animation: fadeUp 0.6s ease forwards 0.2s; }
+
   .hero-name {
     font-family: var(--serif);
-    font-size: clamp(60px, 9vw, 96px);
+    font-size: clamp(52px, 8vw, 88px);
     font-weight: 900;
     line-height: 0.95;
     letter-spacing: -0.03em;
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards 0.2s;
+    margin-bottom: 24px;
   }
 
-  .hero-name span {
-    display: block;
-    color: var(--accent);
-    font-style: italic;
-    font-weight: 700;
-  }
-
-  .hero-right {
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards 0.35s;
-  }
+  .hero-name span { display: block; color: var(--accent); font-style: italic; font-weight: 700; }
 
   .hero-tagline {
     font-size: 15px;
@@ -147,12 +168,131 @@
     line-height: 1.8;
     margin-bottom: 28px;
     font-weight: 300;
+    max-width: 460px;
   }
 
   .hero-tagline strong { color: var(--ink); font-weight: 500; }
 
-  .hero-actions { display: flex; flex-direction: column; gap: 10px; }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
 
+  .hero-socials {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--ink-3);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .social-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  .social-icon { width: 14px; height: 14px; fill: currentColor; }
+
+  /* ── PHOTO ── */
+  .hero-photo-wrap {
+    position: relative;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.35s;
+  }
+
+  .photo-frame {
+    position: relative;
+    width: 300px;
+    height: 360px;
+    margin: 0 auto;
+    overflow: visible;
+  }
+
+  .photo-frame img.base-photo {
+    width: 300px;
+    height: 360px;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+    border: 3px solid var(--border);
+    transition: filter 0.5s ease, border-color 0.4s;
+  }
+
+  body.dark .photo-frame img.base-photo {
+    filter: brightness(0.85) contrast(1.05);
+    border-color: var(--accent);
+  }
+
+  /* Accent corner decoration */
+  .photo-frame::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    width: 80px;
+    height: 80px;
+    border-right: 3px solid var(--accent);
+    border-bottom: 3px solid var(--accent);
+    transition: border-color 0.3s;
+    z-index: -1;
+  }
+
+  .photo-frame::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 80px;
+    height: 80px;
+    border-left: 3px solid var(--border);
+    border-top: 3px solid var(--border);
+    transition: border-color 0.3s;
+    z-index: -1;
+  }
+
+  body.dark .photo-frame::after { border-color: var(--border); }
+
+  /* ── HAT & SHADES ── */
+  .hat-svg {
+    position: absolute;
+    top: -90px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
+    transition: top 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .shades-svg {
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 220px;
+    transition: top 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s, opacity 0.4s ease 0.15s;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 11;
+  }
+
+  body.dark .hat-svg {
+    top: -8px;
+    opacity: 1;
+  }
+
+  body.dark .shades-svg {
+    top: 90px;
+    opacity: 1;
+  }
+
+  /* ── BUTTONS ── */
   .btn {
     display: inline-flex;
     align-items: center;
@@ -167,7 +307,6 @@
     border: 1.5px solid;
     cursor: pointer;
     transition: all 0.2s;
-    width: 100%;
   }
 
   .btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
@@ -175,15 +314,17 @@
   .btn-ghost { background: transparent; color: var(--ink); border-color: var(--border); }
   .btn-ghost:hover { border-color: var(--ink); }
 
+  /* ── STATS ── */
   .hero-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     border-top: 1px solid var(--border);
     opacity: 0;
     animation: fadeUp 0.6s ease forwards 0.5s;
+    transition: border-color 0.4s;
   }
 
-  .stat { padding: 28px 0; border-right: 1px solid var(--border); }
+  .stat { padding: 28px 0; border-right: 1px solid var(--border); transition: border-color 0.4s; }
   .stat:last-child { border-right: none; }
 
   .stat-num {
@@ -197,6 +338,7 @@
 
   .stat-label { font-size: 12px; color: var(--ink-3); letter-spacing: 0.04em; }
 
+  /* ── SECTIONS ── */
   section {
     padding: 80px 48px;
     max-width: 1100px;
@@ -212,7 +354,7 @@
   }
 
   .section-num { font-family: var(--serif); font-size: 13px; font-style: italic; color: var(--accent); }
-  .section-rule { height: 1px; background: var(--border); }
+  .section-rule { height: 1px; background: var(--border); transition: background 0.4s; }
 
   .section-title {
     font-family: var(--serif);
@@ -226,15 +368,11 @@
 
   .section-title em { font-style: italic; font-weight: 400; color: var(--ink-3); }
 
+  /* ── SKILLS ── */
   .skills-table { width: 100%; border-collapse: collapse; }
 
-  .skills-table tr {
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-  }
-
+  .skills-table tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
   .skills-table tr:hover { background: var(--accent-light); }
-
   .skills-table td { padding: 16px 0; font-size: 14px; }
   .skills-table td:first-child { font-weight: 500; color: var(--ink); width: 220px; }
   .skills-table td:nth-child(2) { color: var(--ink-3); font-size: 13px; }
@@ -250,21 +388,17 @@
   }
 
   .pill-capable  { background: var(--accent-light); color: var(--accent); }
-  .pill-familiar { background: #f0f0f0; color: var(--ink-2); }
-  .pill-learning { background: #f7f7f7; color: var(--ink-3); }
+  .pill-familiar { background: var(--accent-light); color: var(--ink-2); }
+  .pill-learning { color: var(--ink-3); border: 1px solid var(--border); }
 
   /* ── PROJECT CARDS ── */
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-  }
+  .projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
 
   .project-card {
     background: var(--white);
     border: 1px solid var(--border);
     cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.4s;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -273,427 +407,159 @@
     padding: 0;
   }
 
-  .project-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--accent);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.08);
-  }
+  .project-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 12px 28px rgba(0,0,0,0.12); }
 
-  .project-thumb {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    background: var(--bg);
-    overflow: hidden;
-    border-bottom: 1px solid var(--border);
-    position: relative;
-  }
-
-  .project-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.4s ease;
-  }
-
+  .project-thumb { width: 100%; aspect-ratio: 16/9; background: var(--bg); overflow: hidden; border-bottom: 1px solid var(--border); }
+  .project-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
   .project-card:hover .project-thumb img { transform: scale(1.04); }
 
   .project-thumb-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
     background: linear-gradient(135deg, var(--accent-light) 0%, #fce4d4 100%);
     color: var(--accent);
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 17px;
-    text-align: center;
-    padding: 20px;
+    font-family: var(--serif); font-style: italic; font-size: 17px; text-align: center; padding: 20px;
   }
 
   .project-body { padding: 24px 26px 28px; }
-
-  .project-num {
-    font-family: var(--serif);
-    font-size: 12px;
-    font-style: italic;
-    color: var(--ink-3);
-    margin-bottom: 8px;
-  }
-
-  .project-title {
-    font-family: var(--serif);
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    margin-bottom: 6px;
-    line-height: 1.2;
-    color: var(--ink);
-  }
-
-  .project-type {
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 500;
-    margin-bottom: 14px;
-  }
-
-  .project-desc {
-    font-size: 13.5px;
-    color: var(--ink-2);
-    line-height: 1.75;
-    font-weight: 300;
-    margin-bottom: 16px;
-  }
-
+  .project-num { font-family: var(--serif); font-size: 12px; font-style: italic; color: var(--ink-3); margin-bottom: 8px; }
+  .project-title { font-family: var(--serif); font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; line-height: 1.2; color: var(--ink); }
+  .project-type { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); font-weight: 500; margin-bottom: 14px; }
+  .project-desc { font-size: 13.5px; color: var(--ink-2); line-height: 1.75; font-weight: 300; margin-bottom: 16px; }
   .project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-
-  .tag { font-size: 11px; padding: 5px 10px; border: 1px solid var(--border); color: var(--ink-3); background: var(--bg); }
+  .tag { font-size: 11px; padding: 5px 10px; border: 1px solid var(--border); color: var(--ink-3); background: var(--bg); transition: background 0.4s, border-color 0.4s; }
   .tag-key { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
-
-  .project-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 18px;
-    font-size: 12px;
-    color: var(--accent);
-    font-weight: 500;
-    letter-spacing: 0.04em;
-  }
+  .project-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; font-size: 12px; color: var(--accent); font-weight: 500; letter-spacing: 0.04em; }
 
   /* ── MODAL ── */
   .modal-overlay {
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: rgba(17,17,17,0.78);
     backdrop-filter: blur(4px);
-    z-index: 200;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    opacity: 0;
-    transition: opacity 0.25s ease;
+    z-index: 200; display: none;
+    align-items: center; justify-content: center; padding: 24px;
+    opacity: 0; transition: opacity 0.25s ease;
   }
 
-  .modal-overlay.open {
-    display: flex;
-    opacity: 1;
-  }
+  .modal-overlay.open { display: flex; opacity: 1; }
 
   .modal {
     background: var(--white);
-    max-width: 880px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
+    max-width: 880px; width: 100%; max-height: 90vh; overflow-y: auto;
     position: relative;
-    transform: translateY(20px);
-    transition: transform 0.3s ease;
+    transform: translateY(20px); transition: transform 0.3s ease, background 0.4s;
   }
 
   .modal-overlay.open .modal { transform: translateY(0); }
 
   .modal-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 36px;
-    height: 36px;
-    background: rgba(255,255,255,0.92);
-    border: 1px solid var(--border);
-    cursor: pointer;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: var(--ink);
-    transition: all 0.2s;
+    position: absolute; top: 16px; right: 16px;
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.92); border: 1px solid var(--border);
+    cursor: pointer; z-index: 10;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; color: var(--ink); transition: all 0.2s;
   }
 
+  body.dark .modal-close { background: rgba(30,30,30,0.92); }
   .modal-close:hover { background: var(--accent); color: white; border-color: var(--accent); }
 
-  .modal-image {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
-    overflow: hidden;
-  }
-
-  .modal-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top;
-  }
+  .modal-image { width: 100%; aspect-ratio: 16/9; background: var(--bg); border-bottom: 1px solid var(--border); overflow: hidden; }
+  .modal-image img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 
   .modal-image-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
     background: linear-gradient(135deg, var(--accent-light) 0%, #fce4d4 100%);
-    color: var(--accent);
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 22px;
-    text-align: center;
-    padding: 40px;
+    color: var(--accent); font-family: var(--serif); font-style: italic; font-size: 22px; text-align: center; padding: 40px;
   }
 
   .modal-body { padding: 36px 44px 44px; }
-
-  .modal-type {
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 500;
-    margin-bottom: 10px;
-  }
-
-  .modal-title {
-    font-family: var(--serif);
-    font-size: 32px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-bottom: 18px;
-    line-height: 1.1;
-  }
-
-  .modal-desc {
-    font-size: 15px;
-    color: var(--ink-2);
-    line-height: 1.85;
-    font-weight: 300;
-    margin-bottom: 24px;
-  }
+  .modal-type { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 500; margin-bottom: 10px; }
+  .modal-title { font-family: var(--serif); font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 18px; line-height: 1.1; }
+  .modal-desc { font-size: 15px; color: var(--ink-2); line-height: 1.85; font-weight: 300; margin-bottom: 24px; }
 
   .modal-section-label {
-    font-size: 10px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    font-weight: 500;
-    margin-top: 28px;
-    margin-bottom: 12px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 500;
+    margin-top: 28px; margin-bottom: 12px; padding-top: 24px; border-top: 1px solid var(--border);
   }
 
-  .modal-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 8px;
-  }
-
-  .modal-list li {
-    font-size: 14px;
-    color: var(--ink-2);
-    line-height: 1.7;
-    padding-left: 18px;
-    position: relative;
-    font-weight: 300;
-  }
-
-  .modal-list li::before {
-    content: '→';
-    position: absolute;
-    left: 0;
-    color: var(--accent);
-    font-weight: 500;
-  }
+  .modal-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .modal-list li { font-size: 14px; color: var(--ink-2); line-height: 1.7; padding-left: 18px; position: relative; font-weight: 300; }
+  .modal-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 500; }
 
   .modal-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 24px;
-    color: var(--accent);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    border-bottom: 1px solid var(--accent);
-    padding-bottom: 2px;
-    transition: opacity 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 24px; color: var(--accent); text-decoration: none;
+    font-size: 13px; font-weight: 500; border-bottom: 1px solid var(--accent); padding-bottom: 2px; transition: opacity 0.2s;
   }
 
   .modal-link:hover { opacity: 0.7; }
-
   body.modal-locked { overflow: hidden; }
 
+  /* ── EXPERIENCE ── */
   .timeline { display: grid; gap: 0; }
-
-  .timeline-item {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 48px;
-    padding: 40px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
+  .timeline-item { display: grid; grid-template-columns: 200px 1fr; gap: 48px; padding: 40px 0; border-bottom: 1px solid var(--border); }
   .timeline-item:last-child { border-bottom: none; }
-
   .tl-date { font-size: 12px; color: var(--ink-3); letter-spacing: 0.04em; padding-top: 4px; }
-
-  .tl-company {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 500;
-    margin-bottom: 6px;
-  }
-
-  .tl-role {
-    font-family: var(--serif);
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    margin-bottom: 14px;
-    line-height: 1.2;
-  }
-
+  .tl-company { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 500; margin-bottom: 6px; }
+  .tl-role { font-family: var(--serif); font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 14px; line-height: 1.2; }
   .tl-desc { font-size: 14px; color: var(--ink-2); line-height: 1.8; font-weight: 300; }
 
+  /* ── EDUCATION ── */
   .edu-list { display: grid; gap: 1px; background: var(--border); }
-
-  .edu-item {
-    background: var(--white);
-    padding: 32px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 24px;
-    flex-wrap: wrap;
-    transition: background 0.2s;
-  }
-
+  .edu-item { background: var(--white); padding: 32px 40px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; transition: background 0.2s; }
   .edu-item:hover { background: var(--accent-light); }
-
   .edu-school { font-family: var(--serif); font-size: 18px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 4px; }
   .edu-course { font-size: 13px; color: var(--ink-3); font-weight: 300; }
+  .edu-year { font-size: 12px; color: var(--accent); font-weight: 500; letter-spacing: 0.06em; white-space: nowrap; border: 1px solid var(--accent); padding: 6px 14px; }
 
-  .edu-year {
-    font-size: 12px;
-    color: var(--accent);
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    white-space: nowrap;
-    border: 1px solid var(--accent);
-    padding: 6px 14px;
-  }
-
-  .traits-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--border);
-  }
-
+  /* ── TRAITS ── */
+  .traits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
   .trait { background: var(--white); padding: 32px 28px; transition: background 0.2s; }
   .trait:hover { background: var(--accent-light); }
-
-  .trait-label {
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 500;
-    margin-bottom: 12px;
-  }
-
+  .trait-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 500; margin-bottom: 12px; }
   .trait-text { font-size: 14px; color: var(--ink-2); line-height: 1.75; font-weight: 300; }
 
-  .contact-strip {
-    background: var(--ink);
-    color: white;
-    padding: 72px 48px;
-  }
+  /* ── CONTACT ── */
+  .contact-strip { background: var(--ink); color: white; padding: 72px 48px; transition: background 0.4s; }
+  body.dark .contact-strip { background: #0a0a0a; }
 
-  .contact-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 48px;
-  }
-
-  .contact-heading {
-    font-family: var(--serif);
-    font-size: clamp(32px, 5vw, 52px);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-    margin-bottom: 12px;
-  }
-
+  .contact-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 48px; }
+  .contact-heading { font-family: var(--serif); font-size: clamp(32px, 5vw, 52px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 12px; }
   .contact-heading em { font-style: italic; font-weight: 400; color: #aaaaaa; }
   .contact-sub { font-size: 14px; color: #999999; font-weight: 300; }
-
   .contact-details { display: flex; flex-direction: column; gap: 12px; text-align: right; }
 
   .contact-link {
-    color: white;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 300;
-    transition: color 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: flex-end;
+    color: white; text-decoration: none; font-size: 14px; font-weight: 300;
+    transition: color 0.2s; display: flex; align-items: center; gap: 8px; justify-content: flex-end;
   }
-
   .contact-link:hover { color: #f0a070; }
+  .contact-link svg { width: 15px; height: 15px; fill: currentColor; opacity: 0.6; }
 
-  footer {
-    background: #0a0a0a;
-    padding: 24px 48px;
-    font-size: 12px;
-    color: #555;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  /* ── RULE ── */
+  .full-rule { height: 1px; background: var(--border); max-width: 1100px; margin: 0 auto; padding: 0 48px; box-sizing: content-box; transition: background 0.4s; }
 
-  .full-rule {
-    height: 1px;
-    background: var(--border);
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 48px;
-    box-sizing: content-box;
-  }
+  /* ── FOOTER ── */
+  footer { background: #0a0a0a; padding: 24px 48px; font-size: 12px; color: #555; display: flex; justify-content: space-between; align-items: center; }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 
-  .reveal {
-    opacity: 0;
-    transform: translateY(14px);
-    transition: opacity 0.55s ease, transform 0.55s ease;
-  }
-
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.55s ease, transform 0.55s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
+  /* ── MOBILE ── */
   @media (max-width: 768px) {
     section, .hero { padding-left: 24px; padding-right: 24px; }
     .nav-inner { padding: 14px 24px; }
-    .nav-links, .nav-badge { display: none; }
+    .nav-links li:not(:last-child):not(:nth-last-child(2)) { display: none; }
     .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero-photo-wrap { order: -1; }
+    .photo-frame { width: 200px; height: 240px; }
+    .photo-frame img.base-photo { width: 200px; height: 240px; }
     .projects-grid { grid-template-columns: 1fr; }
     .modal-body { padding: 28px 28px 32px; }
     .modal-title { font-size: 26px; }
@@ -709,11 +575,13 @@
     .traits-grid { grid-template-columns: 1fr; }
     .hero-stats { grid-template-columns: 1fr; }
     .stat { border-right: none; border-bottom: 1px solid var(--border); }
+    .hero-actions { flex-direction: column; }
   }
 </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
   <div class="nav-inner">
     <a class="nav-logo" href="#">Mark G. Lim</a>
@@ -722,34 +590,89 @@
       <li><a href="#experience">Experience</a></li>
       <li><a href="#education">Education</a></li>
       <li><a href="#contact">Contact</a></li>
+      <li>
+        <button class="dark-toggle" id="darkToggle" onclick="toggleDark()">
+          <span id="darkIcon">🌙</span>
+          <span id="darkLabel">Dark</span>
+        </button>
+      </li>
     </ul>
     <span class="nav-badge">Open to work</span>
   </div>
 </nav>
 
+<!-- HERO -->
 <div class="hero">
   <div class="hero-meta">
     <div class="hero-meta-line"></div>
-    <div class="hero-meta-text">IT Student · Developer · Davao Region, PH</div>
+    <div class="hero-meta-text">Developer · Davao Region, PH</div>
     <div class="hero-meta-line"></div>
   </div>
+
   <div class="hero-grid">
-    <div>
+    <div class="hero-left">
       <h1 class="hero-name">
         Mark<br>
         <span>Lim.</span>
       </h1>
-    </div>
-    <div class="hero-right">
       <p class="hero-tagline">
-        First-year IT student with a <strong>genuine interest in automation and scripting.</strong> I build things to solve real problems, learn fast, and I am not afraid to admit what I am still learning.
+        Developer from Davao with a <strong>genuine interest in automation and scripting.</strong> I build things to solve real problems, learn fast, and I am not afraid to admit what I am still learning.
       </p>
       <div class="hero-actions">
         <a href="#projects" class="btn btn-primary">See my work</a>
         <a href="#contact" class="btn btn-ghost">Get in touch</a>
       </div>
+      <div class="hero-socials">
+        <a href="https://www.linkedin.com/in/mark-lim-14a60831b/" class="social-link" target="_blank" rel="noopener">
+          <svg class="social-icon" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://v2.onlinejobs.ph/jobseekers/info/4931158" class="social-link" target="_blank" rel="noopener">
+          <svg class="social-icon" viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.36C18 2.54 15.64 0 12.5 0S7 2.54 7 4.64c0 .48.11.92.18 1.36H5C3.9 6 3 6.9 3 8v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7.5-4c1.3 0 2.5 1.08 2.5 2.64 0 .48-.18.92-.18 1.36H10.18c0-.44-.18-.88-.18-1.36C10 3.08 11.2 2 12.5 2zM12 17l-5-5h3V9h4v3h3l-5 5z"/></svg>
+          OnlineJobs.ph
+        </a>
+        <a href="https://chocolanay1.github.io" class="social-link" target="_blank" rel="noopener">
+          <svg class="social-icon" viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          Portfolio
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-photo-wrap">
+      <div class="photo-frame">
+        <!-- Dark hat SVG -->
+        <svg class="hat-svg" viewBox="0 0 240 100" xmlns="http://www.w3.org/2000/svg">
+          <!-- Brim -->
+          <ellipse cx="120" cy="82" rx="118" ry="16" fill="#1a1a1a"/>
+          <!-- Crown -->
+          <rect x="45" y="20" width="150" height="65" rx="8" fill="#1a1a1a"/>
+          <!-- Hat band -->
+          <rect x="45" y="68" width="150" height="12" rx="2" fill="#c8440a"/>
+          <!-- Shine highlight -->
+          <ellipse cx="95" cy="38" rx="20" ry="6" fill="#2a2a2a" opacity="0.6"/>
+        </svg>
+        <!-- Shades SVG -->
+        <svg class="shades-svg" viewBox="0 0 220 60" xmlns="http://www.w3.org/2000/svg">
+          <!-- Frame bridge -->
+          <rect x="96" y="22" width="28" height="5" rx="2" fill="#111"/>
+          <!-- Left lens -->
+          <rect x="8" y="8" width="84" height="40" rx="10" fill="#0a0a0a" opacity="0.92"/>
+          <!-- Right lens -->
+          <rect x="128" y="8" width="84" height="40" rx="10" fill="#0a0a0a" opacity="0.92"/>
+          <!-- Left arm -->
+          <rect x="0" y="18" width="14" height="5" rx="2" fill="#111"/>
+          <!-- Right arm -->
+          <rect x="206" y="18" width="14" height="5" rx="2" fill="#111"/>
+          <!-- Lens shine left -->
+          <ellipse cx="38" cy="22" rx="14" ry="5" fill="#333" opacity="0.5"/>
+          <!-- Lens shine right -->
+          <ellipse cx="158" cy="22" rx="14" ry="5" fill="#333" opacity="0.5"/>
+        </svg>
+        <img class="base-photo" src="images/mark.jpg" alt="Mark G. Lim">
+      </div>
     </div>
   </div>
+
   <div class="hero-stats">
     <div class="stat">
       <div class="stat-num">4</div>
@@ -766,140 +689,76 @@
   </div>
 </div>
 
+<!-- SKILLS -->
 <section class="reveal" id="skills">
-  <div class="section-header">
-    <div class="section-num">i.</div>
-    <div class="section-rule"></div>
-  </div>
+  <div class="section-header"><div class="section-num">i.</div><div class="section-rule"></div></div>
   <h2 class="section-title">Skills & <em>tools</em></h2>
   <table class="skills-table">
     <tbody>
-      <tr>
-        <td>Google Apps Script</td>
-        <td>Event triggers, conditional automation, Sheets manipulation</td>
-        <td><span class="level-pill pill-capable">Capable</span></td>
-      </tr>
-      <tr>
-  <td>C# / Unity</td>
-  <td>Game logic, branching systems, Ink dialogue — used in Ethical Odyssey</td>
-  <td><span class="level-pill pill-familiar">Familiar</span></td>
-</tr>
-      <tr>
-        <td>JavaScript</td>
-        <td>Core logic, DOM, scripting basics</td>
-        <td><span class="level-pill pill-familiar">Familiar</span></td>
-      </tr>
-      <tr>
-        <td>HTML / CSS</td>
-        <td>Markup, layouts, basic styling</td>
-        <td><span class="level-pill pill-familiar">Familiar</span></td>
-      </tr>
-      <tr>
-        <td>GoHighLevel</td>
-        <td>CRM pipelines, contact management, workflow concepts</td>
-        <td><span class="level-pill pill-familiar">Familiar</span></td>
-      </tr>
-      <tr>
-        <td>Python</td>
-        <td>Syntax, basic programs, actively learning</td>
-        <td><span class="level-pill pill-learning">Learning</span></td>
-      </tr>
-      <tr>
-        <td>Java</td>
-        <td>OOP basics, coursework level</td>
-        <td><span class="level-pill pill-learning">Learning</span></td>
-      </tr>
-      <tr>
-        <td>SQL</td>
-        <td>Basic queries, SELECTs, JOINs</td>
-        <td><span class="level-pill pill-learning">Learning</span></td>
-      </tr>
+      <tr><td>Google Apps Script</td><td>Event triggers, conditional automation, Sheets manipulation</td><td><span class="level-pill pill-capable">Capable</span></td></tr>
+      <tr><td>C# / Unity</td><td>Game logic, branching systems, Ink dialogue — used in Ethical Odyssey</td><td><span class="level-pill pill-familiar">Familiar</span></td></tr>
+      <tr><td>JavaScript</td><td>Core logic, DOM, scripting basics</td><td><span class="level-pill pill-familiar">Familiar</span></td></tr>
+      <tr><td>HTML / CSS</td><td>Markup, layouts, basic styling</td><td><span class="level-pill pill-familiar">Familiar</span></td></tr>
+      <tr><td>GoHighLevel</td><td>CRM pipelines, contact management, workflow concepts</td><td><span class="level-pill pill-familiar">Familiar</span></td></tr>
+      <tr><td>Python</td><td>Syntax, basic programs, actively learning</td><td><span class="level-pill pill-learning">Learning</span></td></tr>
+      <tr><td>Java</td><td>OOP basics, coursework level</td><td><span class="level-pill pill-learning">Learning</span></td></tr>
+      <tr><td>SQL</td><td>Basic queries, SELECTs, JOINs</td><td><span class="level-pill pill-learning">Learning</span></td></tr>
     </tbody>
   </table>
 </section>
 
 <div class="full-rule"></div>
 
+<!-- PROJECTS -->
 <section class="reveal" id="projects">
-  <div class="section-header">
-    <div class="section-num">ii.</div>
-    <div class="section-rule"></div>
-  </div>
+  <div class="section-header"><div class="section-num">ii.</div><div class="section-rule"></div></div>
   <h2 class="section-title">Things I've <em>built</em></h2>
   <div class="projects-grid">
 
     <button class="project-card" data-project="va-hub">
-      <div class="project-thumb">
-        <img src="images/va-hub.png" alt="VA Automation Hub">
-      </div>
+      <div class="project-thumb"><img src="images/va-hub.png" alt="VA Automation Hub"></div>
       <div class="project-body">
         <div class="project-num">01</div>
         <div class="project-title">VA Automation Hub</div>
         <div class="project-type">Internal Tool · Python · Flask</div>
-        <p class="project-desc">A custom internal tool I built to automate the repetitive data-entry tasks at my current job — handling 10,000+ rows of data per month across multiple carriers and pipelines.</p>
-        <div class="project-tags">
-          <span class="tag tag-key">C#</span>
-          <span class="tag tag-key">Python</span>
-          <span class="tag tag-key">Flask</span>
-          <span class="tag tag-key">Automation</span>
-          <span class="tag">Pipelines</span>
-        </div>
+        <p class="project-desc">A custom internal tool I built to automate repetitive data-entry tasks — handling 10,000+ rows of data per month across multiple carriers and pipelines.</p>
+        <div class="project-tags"><span class="tag tag-key">Python</span><span class="tag tag-key">Flask</span><span class="tag tag-key">Automation</span><span class="tag">Pipelines</span></div>
         <div class="project-cta">View details →</div>
       </div>
     </button>
 
     <button class="project-card" data-project="mapogo">
-      <div class="project-thumb">
-        <img src="images/mapogo-leaderboard.png" alt="Mapogo Agent Leaderboard">
-      </div>
+      <div class="project-thumb"><img src="images/mapogo-leaderboard.png" alt="Mapogo Agent Leaderboard"></div>
       <div class="project-body">
         <div class="project-num">02</div>
         <div class="project-title">Mapogo Agent Leaderboard</div>
         <div class="project-type">Automation · Google Apps Script</div>
         <p class="project-desc">A live leaderboard built in Google Apps Script that automatically ranks agents based on enrollment data, with dynamic avatar tiers and a full history table.</p>
-        <div class="project-tags">
-          <span class="tag tag-key">Triggers</span>
-          <span class="tag tag-key">Conditional logic</span>
-          <span class="tag">Google Sheets</span>
-        </div>
+        <div class="project-tags"><span class="tag tag-key">Triggers</span><span class="tag tag-key">Conditional logic</span><span class="tag">Google Sheets</span></div>
         <div class="project-cta">View details →</div>
       </div>
     </button>
 
     <button class="project-card" data-project="ethical-odyssey">
-      <div class="project-thumb">
-        <img src="images/ethical-odyssey.png" alt="Ethical Odyssey gameplay">
-      </div>
+      <div class="project-thumb"><img src="images/ethical-odyssey.png" alt="Ethical Odyssey gameplay"></div>
       <div class="project-body">
         <div class="project-num">03</div>
         <div class="project-title">Ethical Odyssey</div>
-        <div class="project-type">2D Pixel RPG · Capstone Project</div>
-        <p class="project-desc">A fully playable 2D pixel RPG built as my Senior High School capstone. Core mechanic is a branching decision system with ethical, neutral, and non-ethical paths.</p>
-        <div class="project-tags">
-          <span class="tag tag-key">C#</span>
-          <span class="tag tag-key">Branching logic</span>
-          <span class="tag tag-key">State management</span>
-          <span class="tag">Unity</span>
-          <span class="tag">Game design</span>
-        </div>
+        <div class="project-type">2D Pixel RPG · C# · Unity · Capstone</div>
+        <p class="project-desc">A fully playable 2D pixel RPG built as my SHS capstone. Core mechanic is a branching decision system with ethical, neutral, and non-ethical paths — built in C# with Unity.</p>
+        <div class="project-tags"><span class="tag tag-key">C#</span><span class="tag tag-key">Branching logic</span><span class="tag">Unity</span><span class="tag">Game design</span></div>
         <div class="project-cta">View details →</div>
       </div>
     </button>
 
     <button class="project-card" data-project="ghl">
-      <div class="project-thumb">
-        <img src="images/ghl-pipeline.png" alt="GoHighLevel CRM Pipeline">
-      </div>
+      <div class="project-thumb"><img src="images/ghl-pipeline.png" alt="GoHighLevel CRM Pipeline"></div>
       <div class="project-body">
         <div class="project-num">04</div>
         <div class="project-title">CRM & Workflow Exposure</div>
         <div class="project-type">GoHighLevel · SaaS · Pipelines</div>
-        <p class="project-desc">Daily hands-on work in GoHighLevel — managing 6,900+ opportunities across multiple pipeline stages. Practical understanding of how SaaS tools handle real business workflows.</p>
-        <div class="project-tags">
-          <span class="tag">GoHighLevel</span>
-          <span class="tag">CRM</span>
-          <span class="tag">Pipelines</span>
-        </div>
+        <p class="project-desc">Daily hands-on work in GoHighLevel — managing 6,900+ opportunities across multiple pipeline stages and understanding real SaaS business workflows.</p>
+        <div class="project-tags"><span class="tag">GoHighLevel</span><span class="tag">CRM</span><span class="tag">Pipelines</span></div>
         <div class="project-cta">View details →</div>
       </div>
     </button>
@@ -907,18 +766,15 @@
   </div>
 </section>
 
-<!-- PROJECT MODALS -->
+<!-- MODALS -->
 <div class="modal-overlay" id="modal-va-hub" data-modal>
   <div class="modal">
     <button class="modal-close" data-close>×</button>
-    <div class="modal-image">
-      <img src="images/va-hub.png" alt="VA Automation Hub interface">
-    </div>
+    <div class="modal-image"><img src="images/va-hub.png" alt="VA Automation Hub interface"></div>
     <div class="modal-body">
       <div class="modal-type">Internal Tool · Python · Flask</div>
       <h3 class="modal-title">VA Automation Hub</h3>
-      <p class="modal-desc">A custom internal automation tool I built to handle the repetitive data-entry tasks at my current job. Before this existed, processing 10,000+ rows of monthly carrier commission data was almost entirely manual. The Hub now handles parsing, member matching, and pipeline routing in a fraction of the time.</p>
-
+      <p class="modal-desc">A custom internal automation tool I built to handle the repetitive data-entry tasks at my current job. Before this existed, processing 10,000+ rows of monthly carrier commission data was almost entirely manual.</p>
       <div class="modal-section-label">What it does</div>
       <ul class="modal-list">
         <li>Parses carrier commission files (XLSX / PDF) and detects the carrier from column structure automatically</li>
@@ -927,7 +783,6 @@
         <li>Syncs cleaned data back into GoHighLevel via API</li>
         <li>Runs locally on a Flask server with a clean dark-mode dashboard UI</li>
       </ul>
-
       <div class="modal-section-label">Why it matters</div>
       <ul class="modal-list">
         <li>Real production tool — actively used to process 10,000+ rows per month</li>
@@ -941,14 +796,11 @@
 <div class="modal-overlay" id="modal-mapogo" data-modal>
   <div class="modal">
     <button class="modal-close" data-close>×</button>
-    <div class="modal-image">
-      <img src="images/mapogo-leaderboard.png" alt="Mapogo Daily Closers Leaderboard">
-    </div>
+    <div class="modal-image"><img src="images/mapogo-leaderboard.png" alt="Mapogo Daily Closers Leaderboard"></div>
     <div class="modal-body">
       <div class="modal-type">Automation · Google Apps Script</div>
       <h3 class="modal-title">Mapogo Agent Leaderboard</h3>
-      <p class="modal-desc">A live leaderboard system built in Google Apps Script that automatically ranks agents based on daily enrollment data. Originally built to replace a manual spreadsheet that had to be updated by hand every morning — this version updates itself.</p>
-
+      <p class="modal-desc">A live leaderboard system built in Google Apps Script that automatically ranks agents based on daily enrollment data. Originally built to replace a manual spreadsheet updated by hand every morning.</p>
       <div class="modal-section-label">What it does</div>
       <ul class="modal-list">
         <li>Event-driven triggers fire on every data change — no manual refresh</li>
@@ -957,7 +809,6 @@
         <li>Movement tracker shows position changes day-over-day with arrow indicators</li>
         <li>Full history table with manual input support for corrections</li>
       </ul>
-
       <div class="modal-section-label">Why it matters</div>
       <ul class="modal-list">
         <li>Demonstrates trigger-based automation, conditional logic, and data binding</li>
@@ -971,30 +822,25 @@
 <div class="modal-overlay" id="modal-ethical-odyssey" data-modal>
   <div class="modal">
     <button class="modal-close" data-close>×</button>
-    <div class="modal-image">
-      <img src="images/ethical-odyssey.png" alt="Ethical Odyssey gameplay" style="width:100%;height:100%;object-fit:cover;object-position:top;">
-    </div>
+    <div class="modal-image"><img src="images/ethical-odyssey.png" alt="Ethical Odyssey gameplay" style="width:100%;height:100%;object-fit:cover;object-position:top;"></div>
     <div class="modal-body">
-      <div class="modal-type">2D Pixel RPG · Capstone Project</div>
+      <div class="modal-type">2D Pixel RPG · C# · Unity · Capstone Project</div>
       <h3 class="modal-title">Ethical Odyssey</h3>
-      <p class="modal-desc">A fully playable 2D pixel RPG developed as my Senior High School capstone at STI Tagum College. The game's core mechanic is a branching decision system — every choice the player makes is classified as ethical, neutral, or non-ethical, and the story routes accordingly.</p>
-
+      <p class="modal-desc">A fully playable 2D pixel RPG developed as my Senior High School capstone at STI Tagum College. Built in C# with Unity and Ink for dialogue. The core mechanic is a branching decision system where every choice is classified as ethical, neutral, or non-ethical.</p>
       <div class="modal-section-label">What I built</div>
       <ul class="modal-list">
-        <li>Branching dialogue system with ethical / neutral / non-ethical decision tree</li>
+        <li>Branching dialogue system with ethical / neutral / non-ethical decision tree using Ink language</li>
         <li>Player state tracking that persists choices across the entire playthrough</li>
         <li>Story routing logic that changes outcomes based on cumulative decisions</li>
         <li>Custom pixel art and tile-based level design</li>
-        <li>Fully C# Build, and Ink language for dialogues. Built with Unity.</li>
+        <li>Full C# codebase built in Unity</li>
       </ul>
-
       <div class="modal-section-label">Why it matters</div>
       <ul class="modal-list">
         <li>Designing branching logic taught me to map decision trees before coding — a habit that carries directly into scripting and automation</li>
         <li>State management across long playthroughs gave me real practice with conditional flows</li>
         <li>Successfully defended as my SHS capstone project</li>
       </ul>
-
       <a href="https://web.facebook.com/profile.php?id=61574556643287" class="modal-link" target="_blank" rel="noopener">Visit the Ethical Odyssey Facebook page →</a>
     </div>
   </div>
@@ -1003,21 +849,17 @@
 <div class="modal-overlay" id="modal-ghl" data-modal>
   <div class="modal">
     <button class="modal-close" data-close>×</button>
-    <div class="modal-image">
-      <img src="images/ghl-pipeline.png" alt="GoHighLevel pipeline view">
-    </div>
+    <div class="modal-image"><img src="images/ghl-pipeline.png" alt="GoHighLevel pipeline view"></div>
     <div class="modal-body">
       <div class="modal-type">GoHighLevel · SaaS · Pipelines</div>
       <h3 class="modal-title">CRM & Workflow Exposure</h3>
-      <p class="modal-desc">Through my current role at Senior Benefits Agency, I work daily inside GoHighLevel — managing 6,900+ opportunities across pipeline stages including New Lead, Submitted, Pending, RFI, and Pending Resubmission. While I am a user rather than a builder of the platform, this hands-on exposure gave me a working mental model of how SaaS tools handle real business workflows.</p>
-
+      <p class="modal-desc">Through my current role at Senior Benefits Agency, I work daily inside GoHighLevel — managing 6,900+ opportunities across pipeline stages including New Lead, Submitted, Pending, RFI, and Pending Resubmission.</p>
       <div class="modal-section-label">What I do day to day</div>
       <ul class="modal-list">
         <li>Move opportunities through pipeline stages based on client status updates</li>
         <li>Manage contact records, opportunity sources, and follow-up workflows</li>
         <li>Identify edge cases and pain points that my VA Automation Hub later solved</li>
       </ul>
-
       <div class="modal-section-label">Why it matters</div>
       <ul class="modal-list">
         <li>Real-world SaaS exposure at scale — not a tutorial or sandbox account</li>
@@ -1030,11 +872,9 @@
 
 <div class="full-rule"></div>
 
+<!-- EXPERIENCE -->
 <section class="reveal" id="experience">
-  <div class="section-header">
-    <div class="section-num">iii.</div>
-    <div class="section-rule"></div>
-  </div>
+  <div class="section-header"><div class="section-num">iii.</div><div class="section-rule"></div></div>
   <h2 class="section-title">Where I've <em>worked</em></h2>
   <div class="timeline">
     <div class="timeline-item">
@@ -1042,7 +882,7 @@
       <div>
         <div class="tl-company">Senior Benefits Agency</div>
         <div class="tl-role">Data Entry Specialist</div>
-        <p class="tl-desc">My first formal professional role. I handle data entry and records management using GoHighLevel as the primary CRM. Gained practical understanding of how client data flows through a SaaS platform, how pipelines are structured, and how the system ties together different parts of a business workflow.</p>
+        <p class="tl-desc">My first formal professional role. I handle data entry and records management using GoHighLevel as the primary CRM. Gained practical understanding of how client data flows through a SaaS platform and how pipelines are structured.</p>
       </div>
     </div>
     <div class="timeline-item">
@@ -1058,25 +898,17 @@
 
 <div class="full-rule"></div>
 
+<!-- EDUCATION -->
 <section class="reveal" id="education">
-  <div class="section-header">
-    <div class="section-num">iv.</div>
-    <div class="section-rule"></div>
-  </div>
+  <div class="section-header"><div class="section-num">iv.</div><div class="section-rule"></div></div>
   <h2 class="section-title">Where I <em>studied</em></h2>
   <div class="edu-list">
     <div class="edu-item">
-      <div>
-        <div class="edu-school">University of Mindanao — Tagum College</div>
-        <div class="edu-course">Bachelor of Science in Information Technology · In progress</div>
-      </div>
+      <div><div class="edu-school">University of Mindanao — Tagum College</div><div class="edu-course">Bachelor of Science in Information Technology · In progress</div></div>
       <span class="edu-year">2025 – Present</span>
     </div>
     <div class="edu-item">
-      <div>
-        <div class="edu-school">STI Tagum College</div>
-        <div class="edu-course">Senior High School · ICT — Mobile App & Web Development · Graduated</div>
-      </div>
+      <div><div class="edu-school">STI Tagum College</div><div class="edu-course">Senior High School · ICT — Mobile App & Web Development · Graduated</div></div>
       <span class="edu-year">2023 – 2025</span>
     </div>
   </div>
@@ -1084,40 +916,21 @@
 
 <div class="full-rule"></div>
 
+<!-- TRAITS -->
 <section class="reveal">
-  <div class="section-header">
-    <div class="section-num">v.</div>
-    <div class="section-rule"></div>
-  </div>
+  <div class="section-header"><div class="section-num">v.</div><div class="section-rule"></div></div>
   <h2 class="section-title">What I <em>bring</em></h2>
   <div class="traits-grid">
-    <div class="trait">
-      <div class="trait-label">Automation mindset</div>
-      <p class="trait-text">When I see a repetitive process, my first instinct is to ask how it can be scripted. That habit is what led me to build the Mapogo leaderboard system.</p>
-    </div>
-    <div class="trait">
-      <div class="trait-label">Logical thinker</div>
-      <p class="trait-text">Building Ethical Odyssey's branching dialogue system taught me to map out decision trees before writing a single line — a habit that carries directly into scripting work.</p>
-    </div>
-    <div class="trait">
-      <div class="trait-label">Written communicator</div>
-      <p class="trait-text">English is my second language, but I am comfortable with written async communication — clear, direct, and respectful of everyone's time.</p>
-    </div>
-    <div class="trait">
-      <div class="trait-label">Reliable & flexible</div>
-      <p class="trait-text">I take work seriously. I am open to different schedules, time zones, and team setups — including remote async teams.</p>
-    </div>
-    <div class="trait">
-      <div class="trait-label">Fast learner</div>
-      <p class="trait-text">I have been around computers my entire life and pick up new tools quickly, especially when I have a real problem to apply them to.</p>
-    </div>
-    <div class="trait">
-      <div class="trait-label">Coachable</div>
-      <p class="trait-text">I am at the start of my career and I know it. I am here to grow under experienced people — not to fake expertise I do not have.</p>
-    </div>
+    <div class="trait"><div class="trait-label">Automation mindset</div><p class="trait-text">When I see a repetitive process, my first instinct is to ask how it can be scripted. That habit is what led me to build the Mapogo leaderboard and VA Hub.</p></div>
+    <div class="trait"><div class="trait-label">Logical thinker</div><p class="trait-text">Building Ethical Odyssey's branching dialogue system taught me to map out decision trees before writing a single line — a habit that carries into scripting work.</p></div>
+    <div class="trait"><div class="trait-label">Written communicator</div><p class="trait-text">English is my second language, but I am comfortable with written async communication — clear, direct, and respectful of everyone's time.</p></div>
+    <div class="trait"><div class="trait-label">Reliable & flexible</div><p class="trait-text">I take work seriously. I am open to different schedules, time zones, and team setups — including remote async teams.</p></div>
+    <div class="trait"><div class="trait-label">Fast learner</div><p class="trait-text">I have been around computers my entire life and pick up new tools quickly, especially when I have a real problem to apply them to.</p></div>
+    <div class="trait"><div class="trait-label">Coachable</div><p class="trait-text">I am at the start of my career and I know it. I am here to grow under experienced people — not to fake expertise I do not have.</p></div>
   </div>
 </section>
 
+<!-- CONTACT -->
 <div class="contact-strip reveal" id="contact">
   <div class="contact-inner">
     <div>
@@ -1126,12 +939,22 @@
     </div>
     <div class="contact-details">
       <a href="mailto:choydog18@gmail.com" class="contact-link">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
         choydog18@gmail.com
       </a>
       <a href="tel:+639530417007" class="contact-link">
+        <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
         +63 953 041 7007
       </a>
-      <a href="mailto:choydog18@gmail.com" class="btn btn-primary" style="margin-top:8px; width:auto; padding:12px 28px; border-radius:0;">Send me an email →</a>
+      <a href="https://www.linkedin.com/in/mark-lim-14a60831b/" class="contact-link" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+      <a href="https://v2.onlinejobs.ph/jobseekers/info/4931158" class="contact-link" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.36C18 2.54 15.64 0 12.5 0S7 2.54 7 4.64c0 .48.11.92.18 1.36H5C3.9 6 3 6.9 3 8v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7.5-4c1.3 0 2.5 1.08 2.5 2.64 0 .48-.18.92-.18 1.36H10.18c0-.44-.18-.88-.18-1.36C10 3.08 11.2 2 12.5 2zM12 17l-5-5h3V9h4v3h3l-5 5z"/></svg>
+        OnlineJobs.ph
+      </a>
+      <a href="mailto:choydog18@gmail.com" class="btn btn-primary" style="margin-top:8px; width:auto; padding:12px 28px;">Send me an email →</a>
     </div>
   </div>
 </div>
@@ -1142,12 +965,26 @@
 </footer>
 
 <script>
+  // Dark mode
+  function toggleDark() {
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    document.getElementById('darkIcon').textContent = isDark ? '☀️' : '🌙';
+    document.getElementById('darkLabel').textContent = isDark ? 'Light' : 'Dark';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  }
+
+  // Restore theme
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('darkIcon').textContent = '☀️';
+    document.getElementById('darkLabel').textContent = 'Light';
+  }
+
+  // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
     });
   }, { threshold: 0.08 });
 
@@ -1161,32 +998,20 @@
   function openModal(id) {
     const modal = document.getElementById('modal-' + id);
     if (!modal) return;
-    modal.classList.add('open');
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('open'), 10);
     document.body.classList.add('modal-locked');
   }
 
   function closeAllModals() {
-    modals.forEach(m => m.classList.remove('open'));
+    modals.forEach(m => { m.classList.remove('open'); setTimeout(() => { if (!m.classList.contains('open')) m.style.display = 'none'; }, 250); });
     document.body.classList.remove('modal-locked');
   }
 
-  cards.forEach(card => {
-    card.addEventListener('click', () => openModal(card.dataset.project));
-  });
-
-  closeBtns.forEach(btn => {
-    btn.addEventListener('click', closeAllModals);
-  });
-
-  modals.forEach(modal => {
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeAllModals();
-    });
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeAllModals();
-  });
+  cards.forEach(card => card.addEventListener('click', () => openModal(card.dataset.project)));
+  closeBtns.forEach(btn => btn.addEventListener('click', closeAllModals));
+  modals.forEach(modal => modal.addEventListener('click', (e) => { if (e.target === modal) closeAllModals(); }));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllModals(); });
 </script>
 </body>
 </html>
