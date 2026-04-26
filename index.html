@@ -259,36 +259,29 @@
 
   body.dark .photo-frame::after { border-color: var(--border); }
 
-  .photo-reverse-canvas {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    z-index: 5;
-    transition: opacity 0.3s ease;
-  }
-
-  .photo-reverse-canvas.show { opacity: 1; }
   .photo-light,
   .photo-dark-video,
-  .photo-dark-end {
+  .photo-dark-end,
+  .photo-light-video {
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
     object-fit: cover;
     object-position: top center;
-    transition: opacity 0.6s ease;
+    transition: opacity 0.4s ease;
   }
 
-  .photo-light { opacity: 1; z-index: 1; border: 3px solid var(--border); }
-  .photo-dark-video { opacity: 0; z-index: 3; border: none; }
-  .photo-dark-end { opacity: 0; z-index: 2; border: none; }
+  .photo-light { opacity: 1; z-index: 1; border: 3px solid var(--border); transition: opacity 0.4s ease, border-color 0.4s; }
+  .photo-dark-video { opacity: 0; z-index: 3; }
+  .photo-dark-end { opacity: 0; z-index: 2; }
+  .photo-light-video { opacity: 0; z-index: 5; }
 
   body.dark .photo-light { opacity: 0; }
   body.dark .photo-dark-video { opacity: 1; }
   .photo-dark-end.show { opacity: 1; z-index: 4; }
   .photo-dark-video.hide { opacity: 0 !important; }
+  .photo-light-video.show { opacity: 1; }
+
 
   /* ── BUTTONS ── */
   .btn {
@@ -641,7 +634,7 @@
         <img class="photo-light" src="images/mark.jpg" alt="Mark G. Lim">
         <video class="photo-dark-video" id="darkVideo" src="images/mark-dark.mp4" muted playsinline preload="auto"></video>
         <img class="photo-dark-end" id="darkEndFrame" src="images/mark-dark-end.png" alt="Mark G. Lim dark mode">
-        <canvas id="reverseCanvas" class="photo-reverse-canvas"></canvas>
+        <video class="photo-light-video" id="lightVideo" src="images/mark-light.mp4" muted playsinline preload="auto"></video>
       </div>
     </div>
   </div>
@@ -940,89 +933,9 @@
 <script>
   // Photo elements
   const darkVideo = document.getElementById('darkVideo');
+  const lightVideo = document.getElementById('lightVideo');
   const darkEndFrame = document.getElementById('darkEndFrame');
-  const reverseCanvas = document.getElementById('reverseCanvas');
-  const rCtx = reverseCanvas.getContext('2d');
-
-  let reverseFrames = [];
-  let reverseRAF = null;
-  let framesExtracted = false;
-
-  // Extract all frames from video for reverse playback
-  function extractFrames() {
-    return new Promise((resolve) => {
-      if (framesExtracted) { resolve(); return; }
-      const tmpVideo = document.createElement('video');
-      tmpVideo.src = 'images/mark-dark.mp4';
-      tmpVideo.muted = true;
-      tmpVideo.preload = 'auto';
-      tmpVideo.crossOrigin = 'anonymous';
-
-      const tmpCanvas = document.createElement('canvas');
-      const tmpCtx = tmpCanvas.getContext('2d');
-
-      tmpVideo.addEventListener('loadedmetadata', () => {
-        tmpCanvas.width = tmpVideo.videoWidth;
-        tmpCanvas.height = tmpVideo.videoHeight;
-        reverseCanvas.width = tmpVideo.videoWidth;
-        reverseCanvas.height = tmpVideo.videoHeight;
-
-        const duration = tmpVideo.duration;
-        const fps = 24;
-        const totalFrames = Math.floor(duration * fps);
-        let frameIdx = 0;
-
-        function seekNext() {
-          if (frameIdx >= totalFrames) {
-            framesExtracted = true;
-            resolve();
-            return;
-          }
-          tmpVideo.currentTime = frameIdx / fps;
-          frameIdx++;
-        }
-
-        tmpVideo.addEventListener('seeked', () => {
-          tmpCtx.drawImage(tmpVideo, 0, 0);
-          reverseFrames.push(tmpCanvas.toDataURL('image/jpeg', 0.7));
-          seekNext();
-        });
-
-        seekNext();
-      });
-
-      tmpVideo.load();
-    });
-  }
-
-  // Play frames in reverse on canvas
-  function playReverse() {
-    let idx = reverseFrames.length - 1;
-    reverseCanvas.style.opacity = '1';
-    darkEndFrame.classList.remove('show');
-
-    function drawFrame() {
-      if (idx < 0) {
-        reverseCanvas.style.opacity = '0';
-        reverseCanvas.classList.remove('show');
-        return;
-      }
-      const img = new Image();
-      img.onload = () => {
-        rCtx.drawImage(img, 0, 0, reverseCanvas.width, reverseCanvas.height);
-        idx--;
-        reverseRAF = setTimeout(drawFrame, 1000 / 24);
-      };
-      img.src = reverseFrames[idx];
-    }
-    drawFrame();
-  }
-
-  function stopReverse() {
-    if (reverseRAF) { clearTimeout(reverseRAF); reverseRAF = null; }
-    reverseCanvas.style.opacity = '0';
-    reverseCanvas.classList.remove('show');
-  }
+  const lightPhoto = document.querySelector('.photo-light');
 
   function toggleDark() {
     document.body.classList.toggle('dark');
@@ -1032,9 +945,10 @@
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
 
     if (isDark) {
-      // Stop any reverse playback
-      stopReverse();
-      // Play forward video
+      // Hide light video if playing
+      lightVideo.pause();
+      lightVideo.classList.remove('show');
+      lightPhoto.style.opacity = '0';
       darkEndFrame.classList.remove('show');
       darkVideo.classList.remove('hide');
       darkVideo.currentTime = 0;
@@ -1043,26 +957,21 @@
       darkVideo.onended = () => {
         darkEndFrame.classList.add('show');
         darkVideo.classList.add('hide');
-        // Extract frames in background for later reverse
-        if (!framesExtracted) extractFrames();
       };
     } else {
-      // Going back to light — play in reverse
+      // Going light — play reverse video
       darkVideo.pause();
       darkVideo.classList.add('hide');
-
-      if (framesExtracted) {
-        reverseCanvas.classList.add('show');
-        playReverse();
-      } else {
-        // Frames not ready yet — just extract and play
-        extractFrames().then(() => {
-          reverseCanvas.classList.add('show');
-          playReverse();
-        });
-      }
-
       darkEndFrame.classList.remove('show');
+
+      lightVideo.currentTime = 0;
+      lightVideo.classList.add('show');
+      lightVideo.play();
+
+      lightVideo.onended = () => {
+        lightVideo.classList.remove('show');
+        lightPhoto.style.opacity = '1';
+      };
     }
   }
 
@@ -1073,8 +982,7 @@
     document.getElementById('darkLabel').textContent = 'Light';
     darkEndFrame.classList.add('show');
     darkVideo.classList.add('hide');
-    // Pre-extract frames in background
-    setTimeout(() => extractFrames(), 2000);
+    lightPhoto.style.opacity = '0';
   }
 
   // Scroll reveal
